@@ -13,6 +13,9 @@ there are 2 part of this app
     - FULL_FILLED_WITH_REMAIN: 1 : new order is matched and able to be fully filed by the existing orderbook record and orderbook record still left some remaining.
     - PARTIAL_FILLED: 2 : new order is matched and able to be partial filed by the existing orderbook, so there is new sub-order will be created.
     - NEW_ORDER: 3 : new order is not matched, and insert it to the order book.
+- Order info
+    - BUY : 0
+    - SELL : 1
 - Mockup db inserted
   - pairs
     
@@ -72,7 +75,6 @@ demo step :
 - since done registering, user now can insert order by api POST `/order`
 - get order boook by api GET `/order/:pairID`
 - get user balance by api GET `/user/:userId`
-
 
 ## Dependency
 my test dependency referency
