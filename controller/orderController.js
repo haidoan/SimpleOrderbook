@@ -9,19 +9,13 @@ const { SCENARIO, ORDER_TYPE, ORDER_STATUS } = require('../config/constant');
 const status = require('http-status');
 const joi = require('joi');
 const orderBook = require('../helper/orderBook');
-// const jwt = require('jsonwebtoken');
 
 async function updateBuyerBalance(userId, currency, amount) {
-  console.log(`updateBuyerBalance for ${userId} amount ${amount} currency ${currency}`);
-
-  // const currency = await CurrencyModel.findOne({ _id: order.pairID });
   const user = await UserModel.findOne({ userId });
   const balances = user.balances;
-  // user[currency] += amount;
   const index = balances.findIndex(b => {
     return b.id == currency;
   });
-  // console.log('currency index', index);
   if (index > -1) {
     balances[index].balance += amount;
   }
@@ -54,8 +48,6 @@ function findIndex(arr, o) {
 }
 
 async function updateOrderStatus(data) {
-  // console.log('orders', orders);
-
   const ids = [];
   data.orders.forEach(o => {
     ids.push(o._id);
@@ -67,21 +59,11 @@ async function updateOrderStatus(data) {
 
 async function updateOrderStatusWithRemainingOrder(data, remainingOrders) {
   data.orders.forEach(async o => {
-    console.log('remainingOrders', remainingOrders, typeof remainingOrders[0]);
-    console.log('o', o._id, o._id.toString(), typeof o._id, typeof o.amount);
-    console.log('remainingOrders.include ', remainingOrders.includes(o._id.toString()));
     const index = findIndex(remainingOrders, o);
     if (index > -1) {
-      console.log('true');
-      // const newAmount = -1 * remainingOrders[index].amount;
-      console.log('remainingOrders[index].amount ', remainingOrders[index].amount);
       await OrderModel.updateOne({ _id: o._id }, { $set: { amount: remainingOrders[index].amount } });
     } else {
-      console.log('false');
       await OrderModel.updateOne({ _id: o._id }, { $set: { status: ORDER_STATUS.FILLED, amount: 0 } });
-      // update those orderbook which has all orders filled!
-      // await OrderBookModel.deleteOne({ price: o.price, pairID: o.pairID });
-      console.log('delete orderBook ', o.price, o.pairID);
     }
   });
 }
@@ -97,7 +79,6 @@ async function insertNewOrderBook(orderBook) {
 }
 
 async function updateOrderBook(query, value) {
-  console.log('update order book ', query, value);
   await OrderBookModel.updateOne(query, value);
 }
 
@@ -150,7 +131,6 @@ async function fullFilled(orderData, orderToFill) {
   }
   await updateOrderStatus(orderToFill);
   // remove order book
-  console.log('full fill delete order book ', sortPrice, pairID);
   await OrderBookModel.deleteMany({ pairID, price: sortPrice });
 }
 async function updateOrderStatusAndCreateNewOrder(orderData, orderToFill, orderToCreate) {
@@ -192,7 +172,6 @@ async function fullFilledWithRemain(orderData, orderToFill, remainingOrder, orde
     });
   } else {
     // there is no remaining order -> all fulled filled
-    console.log('full filled, should not reach here!');
   }
 
   const len = orderBookToDelete.length;
@@ -225,16 +204,14 @@ const orderController = {
         type: joi.number().required()
       });
       const order = req.body;
-      console.log('order',order);
-      
+
       let seller;
       joi.validate(order, schema, async (err, value) => {
         if (!err) {
           seller = value.seller;
           // check if existing order is matched?
           const result = await orderBook.updateMatcher(order);
-          console.log('result ', JSON.stringify(result, undefined, 2));
-          // console.log('result.scenario ', result);
+          // console.log('result ', JSON.stringify(result, undefined, 2));
           // yes -> get the fillable order and fill it
           // no -> insert new one
           if (result.scenario == SCENARIO.NEW_ORDER) {
@@ -282,7 +259,6 @@ const orderController = {
             });
           }
         } else {
-          console.log('insertOrder err :', err);
           res.status(status.INTERNAL_SERVER_ERROR).send({
             status: 'error',
             error: err.message
@@ -309,16 +285,7 @@ const orderController = {
 
       joi.validate(req.body, schema, async (err, value) => {
         if (!err) {
-          //   value.address = value.address.toLowerCase();
-
           try {
-            // const orderId = new ObjectID();
-            // value = Object.assign({ _id: orderId, status: 0 }, value);
-            // // save order
-            // const newOrder = new OrderModel(value);
-            // await newOrder.save();
-            // // update order book
-
             let query = { pairID: value.pairID };
             let sortQuery;
             if (value.type == ORDER_TYPE.BUY) {

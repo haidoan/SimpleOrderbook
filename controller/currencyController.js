@@ -22,7 +22,7 @@ const userController = {
             data: value
           });
         } else {
-          console.log('insertOrder err :', err);
+          // console.log('insertOrder err :', err);
           res.status(status.INTERNAL_SERVER_ERROR).send({
             status: 'error',
             error: err.message

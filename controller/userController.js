@@ -59,20 +59,6 @@ const userController = {
       });
     }
   },
-  // async getUsers(req, res) {
-  //   try {
-  //     const users = await UserModel.find({});
-  //     res.status(status.OK).send({
-  //       status: 'success',
-  //       data: users
-  //     });
-  //   } catch (error) {
-  //     res.status(status.INTERNAL_SERVER_ERROR).send({
-  //       status: 'failed',
-  //       error: error.message
-  //     });
-  //   }
-  // },
   async getUserById(req, res) {
     try {
       const schema = joi.object().keys({

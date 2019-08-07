@@ -1,12 +1,9 @@
 require('../config/environment');
 const PairModel = require('../model/pair');
-const { ObjectID } = require('../config/db');
-const { SCENARIO, ORDER_TYPE, ORDER_STATUS } = require('../config/constant');
 const status = require('http-status');
 const joi = require('joi');
 
 const userController = {
-  // this is called by user to submit a token request!
   async insertPair(req, res) {
     try {
       // id = price, type, pairID
@@ -27,7 +24,6 @@ const userController = {
             data: value
           });
         } else {
-          console.log('insertOrder err :', err);
           res.status(status.INTERNAL_SERVER_ERROR).send({
             status: 'error',
             error: err.message
@@ -79,9 +75,7 @@ const userController = {
       };
 
       await PairModel.insertMany([pair1, pair2, pair3], { ordered: false });
-      console.log('done add 3 mockup pairs into db!');
     } catch (error) {
-      // console.log('insert pair error!', error);
     }
   }
 };

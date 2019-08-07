@@ -8,13 +8,13 @@ function roundNumber(number) {
 
 async function getPartialOrder(matchOrders, order) {
   let sum = 0;
-  console.log('getPartialOrder ', order.amount, typeof order.amount);
+  // console.log('getPartialOrder ', order.amount, typeof order.amount);
   const orderToFill = [];
   let remainingOrder = [];
   for (let i = 0; i < matchOrders.length; i++) {
     sum += roundNumber(matchOrders[i].amount);
     if (sum === order.amount) {
-      console.log('1111111111');
+      // console.log('1111111111');
       orderToFill.push({
         _id: matchOrders[i]._id,
         amount: roundNumber(matchOrders[i].amount)
@@ -23,7 +23,7 @@ async function getPartialOrder(matchOrders, order) {
       remainingOrder = remainingOrder.concat(matchOrders.slice(i + 1, matchOrders.length));
       break;
     } else if (sum > order.amount) {
-      console.log('22222222222 ', sum, i);
+      // console.log('22222222222 ', sum, i);
       let remainAmountLastOrder;
       if (i === 0) {
         remainAmountLastOrder = sum - order.amount;
@@ -45,7 +45,7 @@ async function getPartialOrder(matchOrders, order) {
       remainingOrder = remainingOrder.concat(matchOrders.slice(i + 1, matchOrders.length));
       break;
     } else {
-      console.log('3333333333333');
+      // console.log('3333333333333');
       orderToFill.push({
         _id: matchOrders[i]._id,
         amount: roundNumber(matchOrders[i].amount)
@@ -61,12 +61,12 @@ async function getPartialOrder(matchOrders, order) {
 
 async function getAllOrder(matchOrders) {
   for (let i = 0; i < matchOrders.length; i++) {
-    console.log('matchOrders[i].amount', matchOrders[i].amount, typeof matchOrders[i].amount);
+    // console.log('matchOrders[i].amount', matchOrders[i].amount, typeof matchOrders[i].amount);
     Object.assign(matchOrders[i], {
       fillAmount: roundNumber(matchOrders[i].amount)
     });
   }
-  console.log('matchOrders123 :', matchOrders);
+  // console.log('matchOrders123 :', matchOrders);
   return matchOrders;
 }
 
@@ -136,10 +136,10 @@ const orderBookHelper = {
         // if price > highest buy -> update(same price existed) or insert (completed new price)
         matchRecords = await getHighestPrice(ORDER_TYPE.BUY, Number(order.pairID), order.price); // pairID :1 and buy order
       } else {
-        console.log('order.type is invalid :', order.type);
+        // console.log('order.type is invalid :', order.type);
       }
 
-      console.log('matchRecords :', JSON.stringify(matchRecords, undefined, 2));
+      // console.log('matchRecords :', JSON.stringify(matchRecords, undefined, 2));
       if (matchRecords && matchRecords.length > 0) {
         // fill order now
         let i,
@@ -150,13 +150,13 @@ const orderBookHelper = {
           totalOpenAmount += roundNumber(matchRecords[i].totalAmount);
           // console.log("matchRecords[i].orders :", matchRecords[i].orders);
           matchOrders = matchOrders.concat(matchRecords[i].orders);
-            orderBookToDelete.push(matchRecords[i]._id);
+          orderBookToDelete.push(matchRecords[i]._id);
           if (totalOpenAmount >= order.amount) break;
           // matchOrders = matchOrders.concat(matchRecords[i].orders);
         }
-        console.log('matchOrders :', matchOrders);
-        console.log('totalOpenAmount :', totalOpenAmount, typeof totalOpenAmount);
-        console.log('order.amount :', order.amount, typeof order.amount);
+        // console.log('matchOrders :', matchOrders);
+        // console.log('totalOpenAmount :', totalOpenAmount, typeof totalOpenAmount);
+        // console.log('order.amount :', order.amount, typeof order.amount);
 
         if (totalOpenAmount == order.amount) {
           // case 1: fill all order in the matchOrders
@@ -173,7 +173,7 @@ const orderBookHelper = {
           //case 3: fill partial
           console.log('scenario case 3 : request %d tokens, available %d tokens ', order.amount, totalOpenAmount);
           const { orderToFill, remainingOrder } = await getPartialOrder(matchOrders, order);
-          console.log('orderToFill111', orderToFill);
+          // console.log('orderToFill111', orderToFill);
 
           const orderToFill2 = await getOrdersFromIds(orderToFill);
           return {
@@ -190,7 +190,7 @@ const orderBookHelper = {
           // this is to get full order detail to client
           // shortOrderInfo is helpful for matcher or api to update its data since orders is filled or reject
           const shortOrderInfo = await getAllOrder(matchOrders);
-          console.log('shortOrderInfo :', shortOrderInfo);
+          // console.log('shortOrderInfo :', shortOrderInfo);
 
           let orderToFill;
           if (shortOrderInfo && shortOrderInfo.length > 0) {
