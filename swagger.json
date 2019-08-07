@@ -1,0 +1,261 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "API document for TPP Assigment",
+        "description": "API document for Assignment",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:3001",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "TPP",
+            "description": "API for TPP assignment"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/order/{pairID}": {
+            "parameters": [
+                {
+                    "name": "pairID",
+                    "in": "path",
+                    "required": true,
+                    "description": "1 : USD_ETH, 2 : USD_BTC, 3 : ETH_BTC",
+                    "type": "number"
+                }
+            ],
+            "get": {
+                "description": "get current order book",
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Get current order book",
+                "responses": {
+                    "200": {
+                        "description": "data with found currency"
+                    }
+                }
+            }
+        },
+        "/order": {
+            "post": {
+                "tags": [
+                    "Order"
+                ],
+                "description": "insert new order or fill order if matched with existed order",
+                "parameters": [
+                    {
+                        "name": "seller",
+                        "in": "body",
+                        "required": true,
+                        "description": "userId as owner of order",
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/Order"
+                        }
+                    }
+                ],
+                "summary": "Get current order book",
+                "responses": {
+                    "200": {
+                        "description": "data with found currency"
+                    }
+                }
+            }
+        },
+        "/pair": {
+            "get": {
+                "description": "get all supported pair",
+                "tags": [
+                    "Pair"
+                ],
+                "summary": "Get all pair",
+                "responses": {
+                    "200": {
+                        "description": "data with found pair"
+                    }
+                }
+            }
+        },
+        "/currency": {
+            "get": {
+                "description": "get all supported currency",
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Get all currencies",
+                "responses": {
+                    "200": {
+                        "description": "data with found currency"
+                    }
+                }
+            }
+        },
+        "/user/{userId}": {
+            "description": "get user info by id",
+            "parameters": [
+                {
+                    "name": "userId",
+                    "in": "path",
+                    "required": true,
+                    "description": "userId of user that we want to find",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user by id",
+                "responses": {
+                    "200": {
+                        "description": "user found"
+                    }
+                }
+            }
+        },
+        "/user/register": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "sign up",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "body",
+                        "description": "ex: user1",
+                        "required": true,
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New user is created",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "description": "login with userId and password, this require sign up first",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "body",
+                        "description": "ex : user1",
+                        "required": true,
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "required": true,
+                        "type": "string",
+                        "description": "authorization",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "user account info",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "required": [
+                "userId",
+                "password",
+                "authorization"
+            ],
+            "properties": {
+                "userId": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "Order": {
+            "required": [
+                "seller",
+                "price",
+                "type",
+                "pairID",
+                "amount"
+            ],
+            "properties": {
+                "seller": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "price": {
+                    "type": "integer",
+                    "uniqueItems": true
+                },
+                "type": {
+                    "type": "integer",
+                    "uniqueItems": true
+                },
+                "pairID": {
+                    "type": "integer",
+                    "uniqueItems": true
+                },
+                "amount": {
+                    "type": "integer",
+                    "uniqueItems": true
+                }
+            }
+        },
+        "Users": {
+            "type": "array",
+            "$ref": "#/definitions/User"
+        },
+        "Orders": {
+            "type": "array",
+            "$ref": "#/definitions/Order"
+        }
+    }
+}

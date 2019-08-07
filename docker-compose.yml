@@ -1,0 +1,20 @@
+version: "2"
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+  tpp_app:
+    container_name: tpp_app
+    restart: always
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGO_URI=mongodb://mongo:27017/SIMPLE_EX
+    links:
+      - mongo
